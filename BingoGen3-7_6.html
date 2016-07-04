@@ -1,0 +1,364 @@
+<html>
+  <head>
+    <title>Bingo-Gen, The Bingo Card Generator</title>
+      <meta name="keywords" content="Bingo,Card,Generator,Genealogy,Game,Family" />
+
+<script>
+
+// written by Kevin Wald copyright 2009
+// permission to redistribute this utility for non-commercial
+// purposes is granted as long as this copyright notice 
+// remains intact with this script
+
+// Initialize the name array from the names textbox
+function init() {
+	narray = String(document.f.names.value).split("\n");
+
+	name_array = new Array();
+	// Remove blank entries
+	var ctr = 0;
+	for (var i=0;i<narray.length;i++) {
+		if ( narray[i].length > 0 ) {
+			name_array[ctr] = narray[i];
+			ctr++;
+		}
+	}
+	// Initialize used array to tell us if the name has
+	// already been used so we don't get duplicates on a card
+	used = new Array(name_array.length);
+	for (var i=0;i<name_array.length;i++) {
+		used[i] = 0;
+	}
+}
+
+function showcard() {
+	if ( name_array.length > 0 ) {
+		document.getElementById('card').style.display='';
+		document.getElementById('instruct').style.display='none';
+		window.scrollTo(0,0);
+	} else {
+		alert('Name list is empty. You must enter at least one name.');
+	}
+}
+
+// Go back to instructions page
+function gotoinstruct() {
+	stoploop();
+	if (document.all) {
+		allnames.innerHTML='';
+	} else {
+		document.getElementById('allnames').innerHTML='';
+	}
+	document.getElementById('allnames').style.display='';
+	document.getElementById('instruct').style.display='';
+	document.getElementById('card').style.display='none';
+	window.scrollTo(0,0);
+}
+
+// Go through each box and put a name there
+function randomize() {
+	for (var x=0;x<5;x++) {
+		for (var y=0;y<5;y++) {
+			if (! (x == 2 && y == 2)) { // Don't do the center box
+				var celldiv = document.getElementById('a' + x + y);
+				var idx = unused();
+				celldiv.innerHTML = name_array[idx];
+			}
+		}
+	}
+}
+
+// Find an unused value to put in box
+function unused() {
+	var idx;
+	// Picking random numbers will usually find an unused name
+	for (var n=0;n<name_array.length;n++) {
+		idx = Math.round(Math.random()*name_array.length);
+		if ( used[idx] == 0) {
+			used[idx] = 1;
+			return idx;
+		}
+	}
+	// If picking random numbers fails to find an unused name,
+	// go through the array sequentially and get the next unused one.
+	for (var n=0;n<name_array.length;n++) {
+		if ( used[n] == 0) {
+			used[n] = 1;
+			return n;
+		}
+	}
+	// If the array is smaller than 24 then start picking names at random
+	// when they all get used
+	idx = Math.round(Math.random()*name_array.length);
+	return idx;
+}
+
+function listall() {
+	stoploop();
+	if ( name_array.length > 0 ) {
+		var therows = ' <table border="1" bordercolor="#000099" cellspacing="3" width="90%" align="center" valign="top" cellpadding="8" bgcolor="#FFFFFF"><tr><th colspan="5" align="center"><strong><font size=+6><a href="javascript:void(0)" onclick="gotoinstruct()" title="Click here to go back to the instruction page"><img src="BingoGen_small.jpg"><img src="BingoGen_small.jpg"><img src="BingoGen_small.jpg"><img src="BingoGen_small.jpg"></a></font></strong> </th></tr> <tr>\n';
+
+		var cnt = 0;
+		for (var i=0;i<name_array.length;i++) {
+			therows = therows + '<td width="20%" height="155">' + name_array[i] + '</td>\n';
+			cnt = cnt + 1;
+			if ( cnt % 5 == 0 )
+				therows = therows + '</tr><tr>\n';
+		}
+		therows = therows + '</tr>\n</table>\n';
+
+		document.getElementById('instruct').style.display='none';
+
+		if (document.all) {
+			allnames.innerHTML = therows;
+		} else {
+			alln = document.getElementById('allnames');
+			alln.innerHTML = therows;
+		}
+		window.scrollTo(0,0);
+	} else {
+		alert('Name list is empty. You must enter at least one name.');
+	}
+}
+
+var loopid;
+var looping;
+function loopcard()
+{
+	init();
+	randomize();
+}
+
+function stoploop()
+{
+	if ( looping ) {
+		clearInterval(loopid);
+		looping = false;
+	}
+}
+
+function startloop()
+{
+	loopcard();
+	loopid = setInterval("loopcard()",2000);
+	looping = true;
+}
+
+</script>
+
+<style>
+body a{
+	font-family:arial;
+	font-size:28px;
+	text-decoration: none;
+	color:#0000FF;
+	}
+</style>	
+</head>
+
+
+<body bgcolor="#CCCCCC" onload="startloop()">
+
+	<div id="allnames"></div>
+
+		<table id="card" border="7" bordercolor="#000099" cellspacing="3" width="90%" align="center" cellpadding="8" bgcolor="#FFFFFF">
+			<tr>
+				<th colspan=5 align=center nowrap>
+					<a href="javascript:void(0)" onclick="gotoinstruct()"><img src="BingoGen.jpg" title="Click here to go to the instruction page"></a>
+				</th>
+			</tr>
+
+			<tr>
+				<td width=20% height=155>
+					<div id=a00></div>
+				</td>
+				<td width=20% height=155>
+
+					<div id=a01></div>
+				</td>
+				<td width=20% height=155>
+
+					<div id=a02></div>
+				</td>
+				<td width=20% height=155>
+					<div id=a03></div>
+				</td>
+				<td width=20% height=155>
+
+					<div id=a04></div>
+				</td>
+
+			</tr>
+			<tr>
+				<td width=20% height=155>
+					<div id=a10></div>
+				</td>
+				<td width=20% height=155>
+					<div id=a11></div>
+
+				</td>
+
+				<td width=20% height=155>
+					<div id=a12></div>
+				</td>
+				<td width=20% height=155>
+					<div id=a13></div>
+				</td>
+				<td width=20% height=155>
+					<div id=a14></div>
+
+				</td>
+			</tr>
+			<tr>
+				<td width=20% height=155>
+					<div id=a20></div>
+				</td>
+				<td width=20% height=155>
+					<div id=a21></div>
+
+				</td>
+
+				
+				<td width=20% height=155 align="center"><font size=+3  			color="#0000FF">
+						<div id=a22><a href="javascript:void(0)" onclick="init();randomize()"><strong>FREE BONUS</strong></a></font></div>
+				</td>
+				<td width=20% height=155>
+					<div id=a23></div>
+				</td>
+				<td width=20% height=155>
+
+					<div id=a24></div>
+
+				</td>
+			</tr>
+			<tr>
+				<td width=20% height=155>
+					<div id=a30></div>
+				</td>
+				<td width=20% height=155>
+
+					<div id=a31></div>
+
+				</td>
+
+				<td width=20% height=155>
+					<div id=a32></div>
+				</td>
+				<td width=20% height=155>
+					<div id=a33></div>
+				</td>
+
+				<td width=20% height=155>
+
+					<div id=a34></div>
+				</td>
+
+			</tr>
+			<tr>
+				<td width=20% height=155>
+					<div id=a40></div>
+				</td>
+
+				<td width=126 height=106>
+
+					<div id=a41></div>
+				</td>
+				<td width=20% height=155>
+
+					<div id=a42></div>
+				</td>
+				<td width=20% height=155>
+					<div id=a43></div>
+
+				</td>
+
+				<td width=20% height=155>
+					<div id=a44></div>
+				</td>
+			</tr>
+		</table>
+
+		<br><br>
+		<table id="instruct" style="display: none;" border="7" bordercolor="#000099" cellspacing="3" width="55%" align="center" valign="top" cellpadding="8" bgcolor="#FFFFFF">
+
+			<tr>
+				<th align="center">
+
+					<img src="BingoGen.jpg">
+				</th>
+			</tr>
+			<tr><td align="center"><b>The Bingo Card Generator</b></td></tr>
+			<tr>
+				<th align="left">
+
+		<h2>
+<br><center>Intructions:  </center><br>
+Enter your family names in the box below, one per line. When you have twenty-four or more, click here to create a bingo card: 
+
+<input type="button" value="Create Card" onclick="init();randomize();showcard()"> 
+
+Use your browser to print the bingo card, then click on '<font color="#0000FF">FREE BONUS</font>' to shuffle the names and produce a new card. (Use print-preview to check the scale before printing). <br><br>To print all the names at once, click here:
+
+<input type="button" value="List All" onclick="init();listall()"> 
+
+This will make a complete set that you can cut up and put in a hat when you play.  You may use as many names as you wish, but too many will slow your game down. Thirty to sixty works best. The number of unique cards you can print grows exponentially depending on how many names you enter.</h2>
+
+		<center><input type="button" onclick="document.f.names.value=''" value="Clear Names" />
+
+			<input type="button" value="Create Card" onclick="init();randomize();showcard()">
+			<input type="button" value="List All" onclick="init();listall()">
+	
+		<form name="f" action="">
+
+				<textarea name="names" cols=31 rows=30>
+Bingo
+Happy
+Care
+Love
+Names
+Places
+Fun
+Games
+Genealogy
+Family
+History
+Play
+Randomize
+Words
+Ancestors
+Descendants
+Five in a Row
+Parents
+Children
+Grandpa
+Grandma
+Cousins
+Nieces
+Nephews
+Play Bingo
+Have Fun
+Family Fun
+Bingo
+Random
+Names
+Stories
+People
+Aunties
+Uncles
+Play Bingo
+Free Bingo
+Family Bingo
+Bingo-Gen
+Generations
+Print Cards
+Instructions
+</textarea>
+
+</form></center>
+				</th>
+			</tr>
+		</table>
+
+
+</body>
+</html>
